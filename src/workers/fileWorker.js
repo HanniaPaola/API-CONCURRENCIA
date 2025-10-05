@@ -75,9 +75,9 @@ async function copyFile(source, destination) {
 }
 
 async function processFile(filePath) {
-    // Simula procesamiento I/O: lee, procesa y guarda
     const content = await fs.readFile(filePath, 'utf-8');
-    const processed = content.toUpperCase(); // Procesamiento simple
+    const processed = content.toUpperCase();
+    await new Promise(res => setTimeout(res, 100)); // 100ms
     const outputPath = filePath.replace('.txt', '_processed.txt');
     await fs.writeFile(outputPath, processed, 'utf-8');
 

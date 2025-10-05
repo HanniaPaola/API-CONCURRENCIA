@@ -1,24 +1,39 @@
-// cluster.js
-import cluster from 'node:cluster';
-import os from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { fork } from 'node:child_process';
+const cluster = require('cluster');
+const os = require('os');
+const server = require('./server');
 
-const numCPUs = os.cpus().length;
+const PORT = process.env.PORT || 3000;
 
 if (cluster.isPrimary) {
-  console.log(`Proceso primario PID ${process.pid}`);
-  
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
+    console.log(`Master PID ${process.pid} ejecutando`);
 
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} terminó. Reiniciando...`);
-    cluster.fork();
-  });
+    const numCPUs = os.cpus().length;
+    console.log(`Creando ${numCPUs} workers...`);
+
+    for (let i = 0; i < numCPUs; i++) {
+        const worker = cluster.fork();
+        worker.on('message', msg => {
+            console.log(`Mensaje del worker ${worker.process.pid}:`, msg);
+        });
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`Worker ${worker.process.pid} terminó (code: ${code}, signal: ${signal}). Reiniciando...`);
+        cluster.fork();
+    });
+
 } else {
+    server.listen(PORT, () => {
+        console.log(`Worker PID ${process.pid} escuchando en el puerto ${PORT}`);
+    });
 
-  import('./server.js');
-  console.log(`Worker PID ${process.pid} ejecutando servidor`);
+    process.on('uncaughtException', (err) => {
+        console.error(`Error no capturado en worker ${process.pid}:`, err);
+        process.exit(1); 
+    });
+
+    process.on('unhandledRejection', (reason) => {
+        console.error(`Promesa rechazada no manejada en worker ${process.pid}:`, reason);
+        process.exit(1);
+    });
 }

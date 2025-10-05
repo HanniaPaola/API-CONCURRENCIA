@@ -1,0 +1,13 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 30
+      arrivalRate: 5 
+scenarios:
+  - name: "Batch File Processing"
+    flow:
+      - post:
+          url: "/api/files/batch"
+          json:
+            files: ["./test.txt","./test_write.txt"]
+            operation: "process"

@@ -1,7 +1,7 @@
 {
   "name": "concurrent-api",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
   "main": "src/cluster.js",
   "scripts": {
     "start": "node src/server.js"
