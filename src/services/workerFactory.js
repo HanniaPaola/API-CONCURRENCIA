@@ -15,7 +15,7 @@ class WorkerFactory extends EventEmitter {
 
     // Crea un nuevo worker
     createWorker() {
-        const worker = new Worker(path.join(__dirname, '../workers/fileWorker.js'));
+        const worker = new Worker(path.resolve(__dirname, '../workers/fileWorker.js'));
 
         worker.on('message', (result) => {
             this.handleWorkerMessage(worker, result);

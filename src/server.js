@@ -67,38 +67,48 @@ const server = http.createServer(async (req, res) => {
         }
 
         // GET /api/files/read
-        if (pathname === '/api/files/read' && req.method === 'GET') {
-            await FilesController.readFile({ query }, res);
-            return;
-        }
+          if (pathname === '/api/files/read' && req.method === 'GET') {
+              await FilesController.readFile(req, res); // ✅ pasa el request real
+              return;
+          }
 
-        // POST /api/files/write
-        if (pathname === '/api/files/write' && req.method === 'POST') {
-            const body = await parseBody(req);
-            await FilesController.writeFile({ body }, res);
-            return;
-        }
 
-        // POST /api/files/copy
-        if (pathname === '/api/files/copy' && req.method === 'POST') {
-            const body = await parseBody(req);
-            await FilesController.copyFile({ body }, res);
-            return;
-        }
+          // POST /api/files/write
+          if (pathname === '/api/files/write' && req.method === 'POST') {
+              req.body = await parseBody(req);
+              await FilesController.writeFile(req, res);
+              return;
+          }
 
-        // POST /api/files/process
-        if (pathname === '/api/files/process' && req.method === 'POST') {
-            const body = await parseBody(req);
-            await FilesController.processFile({ body }, res);
-            return;
-        }
+          // POST /api/files/copy
+          if (pathname === '/api/files/copy' && req.method === 'POST') {
+              req.body = await parseBody(req);
+              await FilesController.copyFile(req, res);
+              return;
+          }
 
-        // POST /api/files/batch
-        if (pathname === '/api/files/batch' && req.method === 'POST') {
-            const body = await parseBody(req);
-            await FilesController.processBatch({ body }, res);
-            return;
-        }
+          // POST /api/files/process
+            if (pathname === '/api/files/process' && req.method === 'POST') {
+                req.body = await parseBody(req);
+                await FilesController.processFile(req, res);
+                return;
+            }
+
+            // GET /api/external/aggregate
+            if (pathname === '/api/external/aggregate' && req.method === 'GET') {
+                const ExternalApiController = require('./controllers/ExternalApiController');
+                await ExternalApiController.aggregateApis(req, res);
+                return;
+            }
+
+
+          // POST /api/files/batch
+          if (pathname === '/api/files/batch' && req.method === 'POST') {
+              req.body = await parseBody(req);
+              await FilesController.processBatch(req, res);
+              return;
+          }
+
 
         // 404 Not Found
         res.writeHead(404);

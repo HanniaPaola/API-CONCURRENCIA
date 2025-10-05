@@ -3,7 +3,6 @@ const Observer = require('../utils/observer');
 const logger = require('../utils/logger');
 const os = require('os');
 
-// Service que coordina las operaciones con workers
 class FileService {
     constructor() {
         const numCPUs = os.cpus().length;

@@ -1,0 +1,13 @@
+{
+  "name": "concurrent-api",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "src/cluster.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "autocannon": "^8.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}
